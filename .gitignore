@@ -1,0 +1,10 @@
+#private keys and certificates
+pki/
+
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.vscode/
+.idea/
+.env

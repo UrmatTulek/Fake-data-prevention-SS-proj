@@ -1,0 +1,6 @@
+cryptography>=42
+pyjwt>=2.8
+fastapi
+uvicorn
+httpx
+pytest
