@@ -3,6 +3,7 @@ import jwt
 from dotenv import load_dotenv
 from fastapi import FastAPI, Depends, Header, HTTPException
 from pydantic import BaseModel
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import ca
 from signing import sign_payload
 load_dotenv()
@@ -30,14 +31,14 @@ class LoginRequest(BaseModel):
 def create_app(pki) -> FastAPI:
     USERS = _load_users()
     app = FastAPI(title="System Security Encryption API")
+    bearer = HTTPBearer(auto_error=False)
 
-    def current_user(authorization: str = Header(default="")) -> str:
-        scheme, _, token = authorization.partition(" ")
-        if scheme.lower() != "bearer" or not token:
+    def current_user(creds: HTTPAuthorizationCredentials | None = Depends(bearer)) -> str:
+        if creds is None:
             raise HTTPException(401, "missing bearer token")
         try:
             claims = jwt.decode(
-                token, pki.jwt_key.public_key(),
+                creds.credentials, pki.jwt_key.public_key(),
                 algorithms=ALGS, issuer=ISS, audience=AUD,
                 options={"require":["exp", "iat", "iss", "aud", "sub"]}
             )
