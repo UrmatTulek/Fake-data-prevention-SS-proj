@@ -1,6 +1,8 @@
 import jwt
 import pki
 import os
+import copy
+import secrets
 from dotenv import load_dotenv
 from fastapi.testclient import TestClient
 from server import create_app, ISS, AUD
@@ -51,3 +53,13 @@ print("\n==Attack 4: forged JWT (alg=none)==")
 forged = jwt.encode({"sub":"admin", "iss": ISS, "aud": AUD}, key=None, algorithm="none")
 r = http.get("/data", headers={"Authorization": f"Bearer {forged}"})
 print(f" server response: HTTP {r.status_code} {r.json()}")
+
+print("\n==Attack 5: unsigned nonce (replay with a swapped nonce)==")
+body = fetch()
+client.verify_response(body)
+attacker_body = copy.deepcopy(body)
+attacker_body["envelope"]["nonce"] = secrets.token_hex(16)
+fresh = attacker_body["envelope"]["nonce"] not in client.seen_nonces
+print(f" nonce looks new to the client: {fresh}")
+print(" [ACCEPTED] naive client:", naive_accept(attacker_body))
+attempt("secure client", lambda: client.verify_response(attacker_body))
