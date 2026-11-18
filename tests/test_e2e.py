@@ -72,3 +72,11 @@ def test_stolen_cert_without_priv(env):
     body["envelope"] = sign_payload(attacker_key, {"user": "alice", "reading": {"celsius": 99.0}})
     with pytest.raises(VerificationError):
         client.verify_response(body)
+
+def test_swapped_nonce(env):
+    _, _, client = env
+    body = raw(client)
+    client.verify_response(body)
+    body["envelope"]["nonce"] = "0" * 32
+    with pytest.raises(VerificationError, match="InvalidSignature"):
+        client.verify_response(body)
