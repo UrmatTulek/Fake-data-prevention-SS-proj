@@ -29,6 +29,7 @@ read and modify. The client must be able to answer:
 | 6 | Expired token or certificate | `exp` claim, certificate validity dates | `test_expired_token`, `test_cert_expired`, `test_expired` |
 | 7 | Token reused for another service | `iss` and `aud` claims checked | `test_wrong_audience` |
 | 8 | Algorithm confusion | `alg` claim is checked | `test_alg_confusion` |
+| 9 | Attacker swapping nonce to bypass replay detection | CA signs the complete envelope which includes the nonce | `test_swapped_nonce` |
 
 ## How it works
 
