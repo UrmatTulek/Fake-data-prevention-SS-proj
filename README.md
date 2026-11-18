@@ -109,9 +109,6 @@ attack is rejected.
 ## Limitations
 
 - No certificate revocation (CRL / OCSP).
-- Private keys are stored unencrypted on disk (use an HSM or encrypted keystore in production).
 - Nonces are kept in memory (a multi-server setup would need a shared store with expiry).
 - The freshness window is sensitive to clock skew.
 - Hardcoded demo users and no login rate limiting.
-- The demo uses plain HTTP. Signatures give authenticity and integrity but not
-  confidentiality, so a real deployment would also use TLS.
